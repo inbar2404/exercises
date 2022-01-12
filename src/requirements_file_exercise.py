@@ -1,36 +1,35 @@
 from typing import List
-from pip._internal.req import parse_requirements, InstallRequirement
-import os.path
 # TODO: Don't forget to update requirements.txt
 
-REQUIREMENTS_FILE_KEY = 'requirements'
+REFERENCE_TO_REQUIREMENT_FILE_KEY = '-r '
 
 
 def create_libraries_string(path_to_file: str) -> str:
-    scanned_files: List[str] = [path_to_file]
-    libraries_list: List[str] = get_libraries_list(path_to_file, scanned_files)
-    # TODO: Find a pretty way to do that
-    return ' '.join(libraries_list)
+    libraries: List[str] = []
+    files_to_scan: List[str] = [path_to_file]
+    scanned_files: List[str] = []
+
+    for current_file in files_to_scan:
+        if current_file not in scanned_files:
+            text: List[str] = read_file_lines(current_file)
+            libraries = get_libraries_list(text, libraries, files_to_scan)
+            scanned_files.append(current_file)
+
+    return ' '.join(libraries)
 
 
-# TODO: Maybe update typing in case of error handling
-def get_libraries_list(path_to_file: str, scanned_files: List[str]) -> List[str]:
-    try:
-        libraries: List[str] = []
-        requirements: List[InstallRequirement] = parse_requirements(path_to_file, session=False)
+def read_file_lines(path_to_file: str) -> List[str]:
+    with open(path_to_file) as file:
+        lines = [line for line in file.read().splitlines() if line]
+        file.close()
+    return lines
 
-        for current_requirement in requirements:
-            # TODO: IMPORTANT! Right now I assume that requirements file will seems like that: '...requirements... .txt' I should read about it and understand what is the best solution
-            # TODO: Think about a pretty why to check this condition
-            if REQUIREMENTS_FILE_KEY in current_requirement.req.name and \
-               os.path.exists(current_requirement.req.name) and \
-               current_requirement.req.name not in scanned_files:
-                scanned_files.append(current_requirement.req.name)
-                libraries.extend(get_libraries_list(current_requirement.req.name, scanned_files))
-            elif current_requirement.req.name not in libraries:
-                libraries.append(current_requirement.req.name)
 
-        return libraries
-    # TODO: Maybe better error-handling, i.e: case of file not exist is most common
-    except Exception:
-        raise
+def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
+    for current_line in lines:
+        current_line = current_line.strip()
+        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
+            files_to_scan.append(current_line.replace(REFERENCE_TO_REQUIREMENT_FILE_KEY, "").replace(" ", ""))  # TODO: Think about a pretty way
+        elif current_line.strip() not in libraries:
+            libraries.append(current_line.replace(" ", "").split('==')[0])  # TODO: Think about a pretty way
+    return libraries
