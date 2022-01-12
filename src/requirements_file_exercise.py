@@ -30,7 +30,6 @@ def create_libraries_string(path_to_file: str) -> str:
 def read_file_lines(path_to_file: str) -> List[str]:
     with open(path_to_file) as file:
         lines = [line for line in file.read().splitlines() if line]
-        file.close()
     return lines
 
 
