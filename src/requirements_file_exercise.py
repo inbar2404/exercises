@@ -3,6 +3,8 @@ from pip._internal.req import parse_requirements, InstallRequirement
 import os.path
 # TODO: Don't forget to update requirements.txt
 
+REQUIREMENTS_FILE_KEY = 'requirements'
+
 
 def create_libraries_string(path_to_file: str) -> str:
     scanned_files: List[str] = [path_to_file]
@@ -18,9 +20,9 @@ def get_libraries_list(path_to_file: str, scanned_files: List[str]) -> List[str]
         requirements: List[InstallRequirement] = parse_requirements(path_to_file, session=False)
 
         for current_requirement in requirements:
-            # TODO: Export 'requirements' to be use as const
+            # TODO: IMPORTANT! Right now I assume that requirements file will seems like that: '...requirements... .txt' I should read about it and understand what is the best solution
             # TODO: Think about a pretty why to check this condition
-            if 'requirements' in current_requirement.req.name and \
+            if REQUIREMENTS_FILE_KEY in current_requirement.req.name and \
                os.path.exists(current_requirement.req.name) and \
                current_requirement.req.name not in scanned_files:
                 scanned_files.append(current_requirement.req.name)
