@@ -1,7 +1,16 @@
 from typing import List
-# TODO: Don't forget to update requirements.txt
 
 REFERENCE_TO_REQUIREMENT_FILE_KEY = '-r '
+
+
+def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
+    for current_line in lines:
+        current_line = current_line.strip()
+        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
+            files_to_scan.append(get_file_name_from_line(current_line))
+        elif current_line not in libraries:
+            libraries.append(get_package_name_from_line(current_line))
+    return libraries
 
 
 def create_libraries_string(path_to_file: str) -> str:
@@ -25,11 +34,9 @@ def read_file_lines(path_to_file: str) -> List[str]:
     return lines
 
 
-def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
-    for current_line in lines:
-        current_line = current_line.strip()
-        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
-            files_to_scan.append(current_line.replace(REFERENCE_TO_REQUIREMENT_FILE_KEY, "").replace(" ", ""))  # TODO: Think about a pretty way
-        elif current_line.strip() not in libraries:
-            libraries.append(current_line.replace(" ", "").split('==')[0])  # TODO: Think about a pretty way
-    return libraries
+def get_package_name_from_line(line: str) -> str:
+    return line.replace(" ", "").split('==')[0]
+
+
+def get_file_name_from_line(line: str) -> str:
+    return line.replace(REFERENCE_TO_REQUIREMENT_FILE_KEY, "").replace(" ", "")
