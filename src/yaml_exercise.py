@@ -4,7 +4,6 @@ import ez_yaml
 
 def get_dict_from_data(data) -> dict:
     dict_to_compare = data
-    # TODO: Find pretty way to do that
     if isinstance(data, list):
         dict_to_compare = data[0]
     return dict_to_compare
@@ -36,7 +35,6 @@ def merge_to_dict(main_dict: dict, data_to_add) -> list:
 
 
 def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
-    # TODO: Handle case files not found?
     with open(main_yaml_file_path) as file:
         main_yaml = yaml.full_load(file)
     yaml_to_add = yaml.safe_load(configuration_to_add)
