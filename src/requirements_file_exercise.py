@@ -25,12 +25,10 @@ def get_libraries_list(path_to_file: str, scanned_files: List[str]) -> List[str]
                current_requirement.req.name not in scanned_files:
                 scanned_files.append(current_requirement.req.name)
                 libraries.extend(get_libraries_list(current_requirement.req.name, scanned_files))
-            else:
+            elif current_requirement.req.name not in libraries:
                 libraries.append(current_requirement.req.name)
 
         return libraries
     # TODO: Maybe better error-handling, i.e: case of file not exist is most common
     except Exception:
         raise
-
-print(create_libraries_string('requirements.txt')) # TODO: REMOVE!
