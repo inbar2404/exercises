@@ -8,5 +8,5 @@ the new value will not override the existing value but instead will create a lis
 
 2. **Requirements files Exercise** - 
 function that receives a requirements file and creates a string consisting of all of its libraries. 
-If the requirements file includes more requirements files inside it, 
+If the requirements file includes more requirements files inside it,  
 their libraries will be attached to the string as well, until there are no more requirements files left.
