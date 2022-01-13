@@ -1,20 +1,90 @@
 import unittest
 from unittest import mock
-
 import yaml
-
 from src.yaml_exercise import merge_yamls
 
 
 class YamlExerciseTest(unittest.TestCase):
-    def test_should_add_dict_with_existing_keys_and_new_values_as_list_to_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_dict_with_existing_keys_and_few_more_new_keys_as_dict_to_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         country: 'USA'
+         city: 'New-York'
+         street: 'street name'
+         """
+        file_name = 'main_yaml.yaml'
+        mock_data_from_main_yaml.return_value = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student']
+        }
+        expected = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student'],
+            'country': 'USA',
+            'city': 'New-York',
+            'street': 'street name'
+        }
 
-    def test_should_add_dict_with_some_of_existing_keys_but_not_all_in_the_end_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
 
-    def test_should_add_dict_with_existing_keys_and_few_new_keys_in_the_end_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+        self.assertEqual(expected, actual)
+
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_dict_with_existing_keys_and_new_values_as_list_instead_original_dict_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         country: 'USA'
+         city: 'New-York'
+         """
+        file_name = 'main_yaml.yaml'
+        mock_data_from_main_yaml.return_value = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student']
+        }
+        expected = {
+            'name': 'inbar',
+            'address': [{'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+                        {'country': 'USA',
+                         'city': 'New-York'}],
+            'job': ['programmer', 'student']
+        }
+
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
+
+        self.assertEqual(expected, actual)
+
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_dict_with_some_of_existing_keys_but_not_all_in_the_end_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         city: 'New-York'
+         """
+        file_name = 'main_yaml.yaml'
+        mock_data_from_main_yaml.return_value = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student']
+        }
+        expected = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student'],
+            'city': 'New-York'
+        }
+
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
+
+        self.assertEqual(expected, actual)
 
     def test_should_add_dict_with_new_keys_in_the_end_of_the_main_yaml(self):
         self.assertEqual(True, False)  # TODO
@@ -31,21 +101,21 @@ class YamlExerciseTest(unittest.TestCase):
     @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
     def test_main_yaml_should_not_change_when_try_to_add_empty_config(self, mock_data_from_main_yaml):
         configuration_to_add = """ """
+        file_name = 'main_yaml.yaml'
         expected = {
                     'name' : 'inbar',
                     'job' : ['programmer', 'student'],
                     'address' : {'country': 'Israel',
                                  'city': 'Hod-Hashron'}
                    }
-        mock_data_from_main_yaml.return_value = expected
+        mock_data_from_main_yaml.return_value = expected.copy()
 
-        merge_yamls('main_yaml.yaml', configuration_to_add)
-        actual = yaml.safe_load(open('main_yaml.yaml').read())
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
 
         self.assertEqual(actual, expected)
 
-    def test_main_yaml_should_not_change_when_try_to_add_the_exact_nested_dict(self):
-        self.assertEqual(True, False) #TODO
-
-    def test_merge_yamls_raise_exception_when_not_found_file(self):
-        self.assertEqual(True, False)  # TODO
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_merge_yamls_raise_exception_when_not_found_file(self, mock_main_yaml_data):
+        mock_main_yaml_data.side_effect = FileNotFoundError
+        self.assertRaises(FileNotFoundError, merge_yamls, 'no_exist.yaml', """dfdfdf""")
