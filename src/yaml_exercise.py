@@ -2,6 +2,19 @@ import yaml
 import ez_yaml
 
 
+def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
+    with open(main_yaml_file_path) as file:
+        main_yaml = yaml.full_load(file)
+    yaml_to_add = yaml.safe_load(configuration_to_add)
+
+    result = merge_to_dict(main_yaml, yaml_to_add)
+    if result is None:
+        # TODO: Handle here case that 'yaml_to_add' is list!!!
+        main_yaml.update(yaml_to_add)
+        result = main_yaml
+
+    ez_yaml.to_file(result, file_path=main_yaml_file_path)
+
 def get_dict_from_data(data) -> dict:
     dict_to_compare = data
     if isinstance(data, list):
@@ -32,17 +45,3 @@ def merge_to_dict(main_dict: dict, data_to_add) -> list:
                 main_dict[key] = data_after_merge
                 return main_dict
     return None
-
-
-def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
-    with open(main_yaml_file_path) as file:
-        main_yaml = yaml.full_load(file)
-    yaml_to_add = yaml.safe_load(configuration_to_add)
-
-    result = merge_to_dict(main_yaml, yaml_to_add)
-    if result is None:
-        # TODO: Handle here case that 'yaml_to_add' is list!!!
-        main_yaml.update(yaml_to_add)
-        result = main_yaml
-
-    ez_yaml.to_file(result, file_path=main_yaml_file_path)
