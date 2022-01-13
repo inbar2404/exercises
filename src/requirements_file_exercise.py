@@ -3,16 +3,6 @@ from typing import List
 REFERENCE_TO_REQUIREMENT_FILE_KEY = '-r '
 
 
-def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
-    for current_line in lines:
-        current_line = current_line.strip()
-        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
-            files_to_scan.append(get_file_name_from_line(current_line))
-        elif current_line not in libraries:
-            libraries.append(get_package_name_from_line(current_line))
-    return libraries
-
-
 def create_libraries_string(path_to_file: str) -> str:
     libraries: List[str] = []
     files_to_scan: List[str] = [path_to_file]
@@ -25,6 +15,16 @@ def create_libraries_string(path_to_file: str) -> str:
             scanned_files.append(current_file)
 
     return ' '.join(libraries)
+
+
+def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
+    for current_line in lines:
+        current_line: str = current_line.strip()
+        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
+            files_to_scan.append(get_file_name_from_line(current_line))
+        elif get_package_name_from_line(current_line) not in libraries:
+            libraries.append(get_package_name_from_line(current_line))
+    return libraries
 
 
 def read_file_lines(path_to_file: str) -> List[str]:
