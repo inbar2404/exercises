@@ -3,19 +3,31 @@ import ez_yaml
 
 
 def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
-    with open(main_yaml_file_path) as file:
-        main_yaml = yaml.full_load(file)
+    main_yaml = read_data_from_main_yaml(main_yaml_file_path)
     yaml_to_add = yaml.safe_load(configuration_to_add)
 
-    result = merge_to_dict(main_yaml, yaml_to_add)
-    if result is None:
-        # TODO: Handle here case that 'yaml_to_add' is list!!!
-        main_yaml.update(yaml_to_add)
-        result = main_yaml
+    result = main_yaml
+    if yaml_to_add is not None:
+        if main_yaml is None or main_yaml == {}:
+            result = yaml_to_add
+        else:
+            result = merge_to_dict(main_yaml, yaml_to_add)
+            if result is None:
+                # TODO: Handle here case that 'yaml_to_add' is list!!!
+                main_yaml.update(yaml_to_add)
+                result = main_yaml
 
     ez_yaml.to_file(result, file_path=main_yaml_file_path)
 
+
+def read_data_from_main_yaml(file_path: str):
+    with open(file_path) as file:
+        return yaml.full_load(file)
+
+
 def get_dict_from_data(data) -> dict:
+    if data is None:
+        return {}
     dict_to_compare = data
     if isinstance(data, list):
         dict_to_compare = data[0]
