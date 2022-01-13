@@ -13,11 +13,18 @@ def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
         else:
             result = merge_to_dict(main_yaml, yaml_to_add)
             if result is None:
-                # TODO: Handle here case that 'yaml_to_add' is list!!!
-                main_yaml.update(yaml_to_add)
-                result = main_yaml
+                result = insert_yaml_to_add_in_the_end_of_main_yaml(main_yaml, yaml_to_add)
 
     ez_yaml.to_file(result, file_path=main_yaml_file_path)
+
+
+def insert_yaml_to_add_in_the_end_of_main_yaml(main_yaml, yaml_to_add):
+    if isinstance(yaml_to_add, list):
+        while len(yaml_to_add) > 0:
+            main_yaml.update(yaml_to_add.pop())
+    else:
+        main_yaml.update(yaml_to_add)
+    return main_yaml
 
 
 def read_data_from_main_yaml(file_path: str):

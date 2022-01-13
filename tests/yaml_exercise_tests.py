@@ -86,17 +86,112 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_should_add_dict_with_new_keys_in_the_end_of_the_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_dict_with_new_keys_in_the_end_of_the_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         newKey: 'New-Value'
+         """
+        file_name = 'main_yaml.yaml'
+        mock_data_from_main_yaml.return_value = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student']
+        }
+        expected = {
+            'name': 'inbar',
+            'address': {'country': 'Israel',
+                        'city': 'Hod-Hashron'},
+            'job': ['programmer', 'student'],
+            'newKey': 'New-Value'
+        }
 
-    def test_should_add_list_with_one_item_to_existing_list_in_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
 
-    def test_should_add_list_with_more_than_one_item_to_existing_list_in_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+        self.assertEqual(expected, actual)
 
-    def test_should_add_list_that_contains_new_dict_in_the_end_of_the_main_yaml(self):
-        self.assertEqual(True, False)  # TODO
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_list_with_one_item_to_existing_list_in_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         - occupation: 'student'
+           place: 'OPU'
+         """
+        file_name = 'main_yaml.yaml'
+        expected = {
+                    'name' : 'inbar',
+                    'job' : [{'occupation':'programmer', 'place':'IDF'},
+                             {'occupation':'student', 'place': 'OPU'}],
+                    'address' : {'country': 'Israel',
+                                 'city': 'Hod-Hashron'}
+                   }
+        mock_data_from_main_yaml.return_value = {
+                    'name' : 'inbar',
+                    'job' : [{'occupation':'programmer', 'place':'IDF'}],
+                    'address' : {'country': 'Israel',
+                                 'city': 'Hod-Hashron'}
+                   }
+
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
+
+        self.assertEqual(actual, expected)
+
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_list_with_more_than_one_item_to_existing_list_in_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         - occupation: 'student'
+           place: 'OPU'
+         - occupation: 'private-teacher'
+           place: 'home'
+         """
+        file_name = 'main_yaml.yaml'
+        expected = {
+                    'name' : 'inbar',
+                    'job' : [{'occupation':'programmer', 'place':'IDF'},
+                             {'occupation':'student', 'place': 'OPU'},
+                             {'occupation': 'private-teacher', 'place': 'home'}],
+                    'address' : {'country': 'Israel',
+                                 'city': 'Hod-Hashron'}
+                   }
+        mock_data_from_main_yaml.return_value = {
+                    'name' : 'inbar',
+                    'job' : [{'occupation':'programmer', 'place':'IDF'}],
+                    'address' : {'country': 'Israel',
+                                 'city': 'Hod-Hashron'}
+                   }
+
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
+
+        self.assertEqual(actual, expected)
+
+    @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
+    def test_should_add_list_that_contains_new_dict_in_the_end_of_the_main_yaml(self, mock_data_from_main_yaml):
+        configuration_to_add = """
+         - relationship: 'mother'
+           full-name: 'Efrat'
+         """
+        file_name = 'main_yaml.yaml'
+        mock_data_from_main_yaml.return_value = {
+                                                'name' : 'inbar',
+                                                'job' : [{'occupation':'programmer', 'place':'IDF'}],
+                                                'address' : {'country': 'Israel',
+                                                             'city': 'Hod-Hashron'}
+                                                }
+        expected = {
+                    'name' : 'inbar',
+                    'job' : [{'occupation':'programmer', 'place':'IDF'}],
+                    'address' : {'country': 'Israel',
+                                 'city': 'Hod-Hashron'},
+                    'relationship': 'mother',
+                    'full-name': 'Efrat'
+                   }
+
+        merge_yamls(file_name, configuration_to_add)
+        actual = yaml.safe_load(open(file_name).read())
+
+        self.assertEqual(actual, expected)
 
     @mock.patch('src.yaml_exercise.read_data_from_main_yaml')
     def test_main_yaml_should_not_change_when_try_to_add_empty_config(self, mock_data_from_main_yaml):
