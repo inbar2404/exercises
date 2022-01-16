@@ -3,17 +3,17 @@ import ez_yaml
 
 
 def merge_yaml(yaml_file: str, additional_configuration: str):
-    yaml = read_data_from_yaml(yaml_file)
+    yaml_data = read_data_from_yaml(yaml_file)
     additional_yaml = yaml.safe_load(additional_configuration)
 
-    result = yaml
+    result = yaml_data
     if additional_yaml is not None:
-        if yaml is None or yaml == {}:
+        if yaml_data is None or yaml_data == {}:
             result = additional_yaml
         else:
-            result = deep_merge_yaml(yaml, additional_yaml)
+            result = deep_merge_yaml(yaml_data, additional_yaml)
             if result is None:
-                result = chain_additional_config_to_yaml(yaml, additional_yaml)
+                result = chain_additional_config_to_yaml(yaml_data, additional_yaml)
 
     ez_yaml.to_file(result, file_path=yaml_file)
 
