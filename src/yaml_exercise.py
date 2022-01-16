@@ -2,65 +2,64 @@ import yaml
 import ez_yaml
 
 
-def merge_yamls(main_yaml_file_path: str, configuration_to_add: str):
-    main_yaml = read_data_from_main_yaml(main_yaml_file_path)
-    yaml_to_add = yaml.safe_load(configuration_to_add)
+def merge_yaml(yaml_file: str, additional_configuration: str):
+    yaml = read_data_from_yaml(yaml_file)
+    additional_yaml = yaml.safe_load(additional_configuration)
 
-    result = main_yaml
-    if yaml_to_add is not None:
-        if main_yaml is None or main_yaml == {}:
-            result = yaml_to_add
+    result = yaml
+    if additional_yaml is not None:
+        if yaml is None or yaml == {}:
+            result = additional_yaml
         else:
-            result = merge_to_dict(main_yaml, yaml_to_add)
+            result = deep_merge_yaml(yaml, additional_yaml)
             if result is None:
-                result = insert_yaml_to_add_in_the_end_of_main_yaml(main_yaml, yaml_to_add)
+                result = chain_additional_config_to_yaml(yaml, additional_yaml)
 
-    ez_yaml.to_file(result, file_path=main_yaml_file_path)
+    ez_yaml.to_file(result, file_path=yaml_file)
 
 
-def insert_yaml_to_add_in_the_end_of_main_yaml(main_yaml, yaml_to_add):
-    if isinstance(yaml_to_add, list):
-        while len(yaml_to_add) > 0:
-            main_yaml.update(yaml_to_add.pop())
+def chain_additional_config_to_yaml(yaml, additional_yaml):
+    if isinstance(additional_yaml, list):
+        while len(additional_yaml) > 0:
+            yaml.update(additional_yaml.pop())
     else:
-        main_yaml.update(yaml_to_add)
-    return main_yaml
+        yaml.update(additional_yaml)
+    return yaml
 
 
-def read_data_from_main_yaml(file_path: str):
-    with open(file_path) as file:
+def read_data_from_yaml(file_name: str):
+    with open(file_name) as file:
         return yaml.full_load(file)
 
 
-def get_dict_from_data(data) -> dict:
+def data_to_dict(data) -> dict:
     if data is None:
         return {}
-    dict_to_compare = data
     if isinstance(data, list):
-        dict_to_compare = data[0]
-    return dict_to_compare
+        return data[0]
+    return data
 
 
-def merge_to_main_dict(main_dict: dict, data):
-    dict_to_compare: dict = get_dict_from_data(data)
-    if main_dict.keys() == dict_to_compare.keys():
+def merge_dict(dict: dict, data):
+    dict_data: dict = data_to_dict(data)
+    if dict.keys() == dict_data.keys():
         if isinstance(data, list):
-            return [main_dict]+data
-        return [main_dict, data]
+            return [dict]+data
+        return [dict, data]
     return None
 
 
-def merge_to_dict(main_dict: dict, data_to_add) -> list:
-    data_after_merge = merge_to_main_dict(main_dict, data_to_add)
-    if data_after_merge is not None:
-        return data_after_merge
+def deep_merge_yaml(yaml_dict: dict, data) -> list:
+    merged_date = merge_dict(yaml_dict, data)
+    if merged_date is not None:
+        return merged_date
 
-    for key, value in main_dict.items():
+    for key, value in yaml_dict.items():
         if isinstance(value, list) and len(value) > 0:
             value = value[0]
         if isinstance(value, dict):
-            data_after_merge = merge_to_dict(value, data_to_add)
-            if data_after_merge is not None:
-                main_dict[key] = data_after_merge
-                return main_dict
+            merged_date = deep_merge_yaml(value, data)
+            if merged_date is not None:
+                yaml_dict[key] = merged_date
+                return yaml_dict
     return None

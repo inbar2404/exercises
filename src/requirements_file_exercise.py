@@ -3,32 +3,32 @@ from typing import List
 REFERENCE_TO_REQUIREMENT_FILE_KEY = '-r '
 
 
-def create_libraries_string(path_to_file: str) -> str:
+def create_libraries_string(file_name: str) -> str:
     libraries: List[str] = []
-    files_to_scan: List[str] = [path_to_file]
+    files: List[str] = [file_name]
     scanned_files: List[str] = []
 
-    for current_file in files_to_scan:
-        if current_file not in scanned_files:
-            text: List[str] = read_file_lines(current_file)
-            libraries = get_libraries_list(text, libraries, files_to_scan)
-            scanned_files.append(current_file)
+    for file in files:
+        if file not in scanned_files:
+            text: List[str] = read_file_lines(file)
+            libraries = create_libraries_list(text, libraries, files)
+            scanned_files.append(file)
 
     return ' '.join(libraries)
 
 
-def get_libraries_list(lines: List[str], libraries: List[str], files_to_scan: List[str]) -> List[str]:
-    for current_line in lines:
-        current_line: str = current_line.strip()
-        if current_line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
-            files_to_scan.append(get_file_name_from_line(current_line))
-        elif get_package_name_from_line(current_line) not in libraries:
-            libraries.append(get_package_name_from_line(current_line))
+def create_libraries_list(lines: List[str], libraries: List[str], files: List[str]) -> List[str]:
+    for line in lines:
+        line: str = line.strip()
+        if line.startswith(REFERENCE_TO_REQUIREMENT_FILE_KEY):
+            files.append(get_file_name_from_line(line))
+        elif get_package_name_from_line(line) not in libraries:
+            libraries.append(get_package_name_from_line(line))
     return libraries
 
 
-def read_file_lines(path_to_file: str) -> List[str]:
-    with open(path_to_file) as file:
+def read_file_lines(file_name: str) -> List[str]:
+    with open(file_name) as file:
         lines = [line for line in file.read().splitlines() if line]
     return lines
 
