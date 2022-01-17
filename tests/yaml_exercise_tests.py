@@ -1,11 +1,11 @@
 import unittest
 from unittest import mock
 import yaml
-from src.yaml_exercise import merge_yaml
+from src.yamlExercise.yaml_exercise import merge_yaml
 
 
 class YamlExerciseTest(unittest.TestCase):
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_dict_with_existing_keys_and_few_more_new_keys_as_dict_to_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          country: 'USA'
@@ -34,7 +34,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_dict_with_existing_keys_and_new_values_as_list_instead_original_dict_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          country: 'USA'
@@ -61,7 +61,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_dict_with_some_of_existing_keys_but_not_all_in_the_end_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          city: 'New-York'
@@ -86,7 +86,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_dict_with_new_keys_in_the_end_of_the_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          newKey: 'New-Value'
@@ -111,7 +111,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_list_with_one_item_to_existing_list_in_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          - occupation: 'student'
@@ -137,7 +137,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(actual, expected)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_list_with_more_than_one_item_to_existing_list_in_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          - occupation: 'student'
@@ -166,7 +166,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(actual, expected)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_should_add_list_that_contains_new_dict_in_the_end_of_the_main_yaml(self, mock_data_from_yaml):
         configuration_to_add = """
          - relationship: 'mother'
@@ -193,7 +193,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(actual, expected)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_main_yaml_should_not_change_when_try_to_add_empty_config(self, mock_data_from_yaml):
         configuration_to_add = """ """
         file_name = 'main_yaml.yaml'
@@ -210,7 +210,7 @@ class YamlExerciseTest(unittest.TestCase):
 
         self.assertEqual(actual, expected)
 
-    @mock.patch('src.yaml_exercise.read_data_from_yaml')
+    @mock.patch('src.yamlExercise.yaml_exercise.read_from_file')
     def test_merge_yaml_raise_exception_when_not_found_file(self, mock_yaml_data):
         mock_yaml_data.side_effect = FileNotFoundError
         self.assertRaises(FileNotFoundError, merge_yaml, 'no_exist.yaml', """dfdfdf""")

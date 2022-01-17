@@ -2,11 +2,11 @@ import unittest
 from unittest import mock
 from unittest.mock import call
 
-from src.requirements_file_exercise import create_libraries_string
+from src.requirementsFileExercise.requirements_file_exercise import create_libraries_string
 
 
 class RequirementsFileExerciseTest(unittest.TestCase):
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_libraries_string_from_single_file(self, mock_read_file_lines):
         mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                              "validators==0.18.2"]
@@ -18,7 +18,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.assert_called_once_with(file_name)
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_libraries_string_from_file_with_references(self, mock_read_file_lines):
         referenced_requirement_file = 'test-requirements.txt'
         mock_lines_of_first_requirement_file = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
@@ -33,7 +33,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.assert_has_calls([call(main_requirements_file), call(referenced_requirement_file)])
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_create_libraries_string_should_add_just_one_instance_of_library_to_list(self, mock_read_file_lines):
         mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                              "validators==0.18.2", "Flask==2.0.2", "Jinja2==3.0.2"]
@@ -45,7 +45,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.assert_called_once_with(file_name)
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_empty_string_for_empty_file(self, mock_read_file_lines):
         excepted = ""
         mock_read_file_lines.return_value = []
@@ -56,7 +56,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.assert_called_once_with(file_name)
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_read_once_file_that_has_more_than_one_reference(self, mock_read_file_lines):
         first_requirements_file = 'requirements.txt'
         second_requirements_file = 'second-requirements.txt'
@@ -77,7 +77,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         self.assertEqual(mock_read_file_lines.call_count, 3)
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_libraries_string_that_referenced_file_has_reference_to_more_file(self, mock_read_file_lines):
         first_requirements_file = 'requirements.txt'
         second_requirements_file = 'second-requirements.txt'
@@ -98,12 +98,12 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         self.assertEqual(mock_read_file_lines.call_count, 3)
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_create_libraries_string_should_raise_file_not_found_error(self, mock_read_file_lines):
         mock_read_file_lines.side_effect = FileNotFoundError
         self.assertRaises(FileNotFoundError, create_libraries_string, "no_exist.txt")
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_create_libraries_string_should_add_libraries_names_without_redundant_spaces(self, mock_read_file_lines):
         mock_read_file_lines.return_value = ["Flask==2.0.2   ", "Flask-RESTful  ==0.3.9", "Jinja2==  3.0.2",
                                              "   validators==0.18.2"]
@@ -114,7 +114,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
 
         self.assertEqual(excepted, actual)
 
-    @mock.patch('src.requirements_file_exercise.read_file_lines')
+    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_libraries_string_from_infinite_recursion_files(self, mock_read_file_lines):
         first_requirements_file = 'requirements.txt'
         second_requirements_file = 'second-requirements.txt'
