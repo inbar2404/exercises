@@ -20,9 +20,9 @@ class RequirementsFileExerciseTest(unittest.TestCase):
 
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_should_create_empty_string_for_empty_file(self, mock_read_file_lines):
-        excepted = ""
+        file_name = 'requirements_file.txt'
         mock_read_file_lines.return_value = []
-        file_name = 'rquirements_file.txt'
+        excepted = ""
 
         actual = create_libraries_string(file_name)
 
