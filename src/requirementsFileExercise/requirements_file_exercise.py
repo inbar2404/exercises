@@ -9,13 +9,13 @@ def create_libraries_string(file_name: str) -> str:
     files: List[str] = [file_name]
     scanned_files: List[str] = []
 
-    for file in files:
-        if file not in scanned_files:
-            text: List[str] = read_file_lines(file)
+    for requirement_file in files:
+        if requirement_file not in scanned_files:
+            text: List[str] = read_file_lines(requirement_file)
             file_libraries, files_references = _create_libraries_list(text)
             libraries += file_libraries
             files += files_references
-            scanned_files.append(file)
+            scanned_files.append(requirement_file)
 
     return ' '.join(libraries)
 
