@@ -8,10 +8,10 @@ from src.requirementsFileExercise.requirements_file_exercise import create_libra
 class RequirementsFileExerciseTest(unittest.TestCase):
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
     def test_create_libraries_string_from_single_file(self, mock_read_file_lines):
-        mock_read_file_lines.return_value = ["Flask ==2.0.2", "  Flask-RESTful", "Jinja2==  3.0.2",
+        mock_read_file_lines.return_value = ["Flask ==2.0.2", "  Flask-RESTful", "Jinja2==  3.0.2", "-replica==3.715",
                                              "validators>=0.18.2", "typing-extensions~=3.10.0.2 ", "Flask==3.0"]
         file_name = 'rquirements_file.txt'
-        excepted = "Flask-3.0 Flask-RESTful Jinja2-3.0.2 validators-0.18.2 typing-extensions-3.10.0.2"
+        excepted = "Flask-3.0 Flask-RESTful Jinja2-3.0.2 -replica-3.715 validators-0.18.2 typing-extensions-3.10.0.2"
 
         actual = create_libraries_string(file_name)
 
