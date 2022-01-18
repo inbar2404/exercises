@@ -8,11 +8,10 @@ def chain(first_yaml_object, second_yaml_object):
 
 
 def merge(first_yaml_object: dict, second_yaml_object):
-    dict_data: dict = _convert_to_dict(second_yaml_object)
-    if first_yaml_object.keys() == dict_data.keys():
-        if isinstance(second_yaml_object, list):
+    if isinstance(second_yaml_object, list):
+        dict_data: dict = _convert_to_dict(second_yaml_object)
+        if first_yaml_object.keys() == dict_data.keys():
             return [first_yaml_object] + second_yaml_object
-        return [first_yaml_object, second_yaml_object]
     return None
 
 
