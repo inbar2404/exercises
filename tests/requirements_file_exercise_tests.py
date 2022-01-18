@@ -11,7 +11,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                              "validators==0.18.2"]
         file_name = 'path_to_rquirements_file.txt'
-        excepted = "Flask Flask-RESTful Jinja2 validators"
+        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2"
 
         actual = create_libraries_string(file_name)
 
@@ -26,7 +26,8 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_lines_of_second_requirement_file = ["requests==2.26.0", "six==1.16.0", "typing-extensions==3.10.0.2"]
         mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file]
         main_requirements_file = 'requirements_file.txt'
-        excepted = "Flask Flask-RESTful Jinja2 validators requests six typing-extensions"
+        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 six-1.16.0 " \
+                   "typing-extensions-3.10.0.2"
 
         actual = create_libraries_string(main_requirements_file)
 
@@ -38,7 +39,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                              "validators==0.18.2", "Flask==2.0.2", "Jinja2==3.0.2"]
         file_name = 'path_to_rquirements_file.txt'
-        excepted = "Flask Flask-RESTful Jinja2 validators"
+        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2"
 
         actual = create_libraries_string(file_name)
 
@@ -68,7 +69,8 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_lines_of_third_requirement_file = ["six==1.16.0", "Flask-RESTful==0.3.9", "redis==2.10.6"]
         mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file,
                                             mock_lines_of_third_requirement_file]
-        excepted = "Flask Jinja2 validators requests typing-extensions six Flask-RESTful redis"
+        excepted = "Flask-2.0.2 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 typing-extensions-3.10.0.2 six-1.16.0 " \
+                   "Flask-RESTful-0.3.9 redis-2.10.6"
 
         actual = create_libraries_string(first_requirements_file)
 
@@ -89,7 +91,8 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_lines_of_third_requirement_file = ["six==1.16.0", "Flask-RESTful==0.3.9", "redis==2.10.6"]
         mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file,
                                             mock_lines_of_third_requirement_file]
-        excepted = "Flask Jinja2 validators requests typing-extensions six Flask-RESTful redis"
+        excepted = "Flask-2.0.2 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 typing-extensions-3.10.0.2 six-1.16.0 " \
+                   "Flask-RESTful-0.3.9 redis-2.10.6"
 
         actual = create_libraries_string(first_requirements_file)
 
@@ -108,7 +111,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_read_file_lines.return_value = ["Flask==2.0.2   ", "Flask-RESTful  ==0.3.9", "Jinja2==  3.0.2",
                                              "   validators==0.18.2"]
         file_name = 'path_to_rquirements_file.txt'
-        excepted = "Flask Flask-RESTful Jinja2 validators"
+        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2"
 
         actual = create_libraries_string(file_name)
 
@@ -123,7 +126,8 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         mock_lines_of_second_requirement_file = ["requests==2.26.0", "six==1.16.0", "-r " + first_requirements_file,
                                                  "typing-extensions==3.10.0.2"]
         mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file]
-        excepted = "Flask Flask-RESTful Jinja2 validators requests six typing-extensions"
+        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 six-1.16.0 " \
+                   "typing-extensions-3.10.0.2"
 
         actual = create_libraries_string(first_requirements_file)
 
