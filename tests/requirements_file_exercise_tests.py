@@ -7,11 +7,11 @@ from src.requirementsFileExercise.requirements_file_exercise import create_libra
 
 class RequirementsFileExerciseTest(unittest.TestCase):
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_should_create_libraries_string_from_single_file(self, mock_read_file_lines):
-        mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
-                                             "validators==0.18.2"]
+    def test_create_libraries_string_from_single_file(self, mock_read_file_lines):
+        mock_read_file_lines.return_value = ["Flask ==2.0.2", "  Flask-RESTful", "Jinja2==  3.0.2",
+                                             "validators>=0.18.2", "typing-extensions~=3.10.0.2 "]
         file_name = 'path_to_rquirements_file.txt'
-        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2"
+        excepted = "Flask-2.0.2 Flask-RESTful Jinja2-3.0.2 validators-0.18.2 typing-extensions-3.10.0.2"
 
         actual = create_libraries_string(file_name)
 
@@ -19,7 +19,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         self.assertEqual(excepted, actual)
 
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_should_create_libraries_string_from_file_with_references(self, mock_read_file_lines):
+    def test_create_libraries_string_from_multiple_files(self, mock_read_file_lines):
         referenced_requirement_file = 'test-requirements.txt'
         mock_lines_of_first_requirement_file = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                                 "-r " + referenced_requirement_file, "validators==0.18.2"]
@@ -35,7 +35,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         self.assertEqual(excepted, actual)
 
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_create_libraries_string_should_add_just_one_instance_of_library_to_list(self, mock_read_file_lines):
+    def test_create_libraries_string_add_just_one_instance_of_library_to_list(self, mock_read_file_lines):
         mock_read_file_lines.return_value = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
                                              "validators==0.18.2", "Flask==2.0.2", "Jinja2==3.0.2"]
         file_name = 'path_to_rquirements_file.txt'
@@ -58,7 +58,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
         self.assertEqual(excepted, actual)
 
     @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_should_read_once_file_that_has_more_than_one_reference(self, mock_read_file_lines):
+    def test_create_libraries_string_from_multiple_files(self, mock_read_file_lines):
         first_requirements_file = 'requirements.txt'
         second_requirements_file = 'second-requirements.txt'
         third_requirements_file = 'third-requirements.txt'
@@ -66,7 +66,7 @@ class RequirementsFileExerciseTest(unittest.TestCase):
                                                 "-r " + third_requirements_file, "validators==0.18.2"]
         mock_lines_of_second_requirement_file = ["requests==2.26.0", "-r " + third_requirements_file,
                                                  "typing-extensions==3.10.0.2"]
-        mock_lines_of_third_requirement_file = ["six==1.16.0", "Flask-RESTful==0.3.9", "redis==2.10.6"]
+        mock_lines_of_third_requirement_file = ["six==1.16.0", "Flask-RESTful==0.3.9", "redis==2.10.6", "-r " + first_requirements_file]
         mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file,
                                             mock_lines_of_third_requirement_file]
         excepted = "Flask-2.0.2 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 typing-extensions-3.10.0.2 six-1.16.0 " \
@@ -105,32 +105,3 @@ class RequirementsFileExerciseTest(unittest.TestCase):
     def test_create_libraries_string_should_raise_file_not_found_error(self, mock_read_file_lines):
         mock_read_file_lines.side_effect = FileNotFoundError
         self.assertRaises(FileNotFoundError, create_libraries_string, "no_exist.txt")
-
-    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_create_libraries_string_should_add_libraries_names_without_redundant_spaces(self, mock_read_file_lines):
-        mock_read_file_lines.return_value = ["Flask==2.0.2   ", "Flask-RESTful  ==0.3.9", "Jinja2==  3.0.2",
-                                             "   validators==0.18.2"]
-        file_name = 'path_to_rquirements_file.txt'
-        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2"
-
-        actual = create_libraries_string(file_name)
-
-        self.assertEqual(excepted, actual)
-
-    @mock.patch('src.requirementsFileExercise.requirements_file_exercise.read_file_lines')
-    def test_should_create_libraries_string_from_infinite_recursion_files(self, mock_read_file_lines):
-        first_requirements_file = 'requirements.txt'
-        second_requirements_file = 'second-requirements.txt'
-        mock_lines_of_first_requirement_file = ["Flask==2.0.2", "Flask-RESTful==0.3.9", "Jinja2==3.0.2",
-                                                "-r " + second_requirements_file, "validators==0.18.2"]
-        mock_lines_of_second_requirement_file = ["requests==2.26.0", "six==1.16.0", "-r " + first_requirements_file,
-                                                 "typing-extensions==3.10.0.2"]
-        mock_read_file_lines.side_effect = [mock_lines_of_first_requirement_file, mock_lines_of_second_requirement_file]
-        excepted = "Flask-2.0.2 Flask-RESTful-0.3.9 Jinja2-3.0.2 validators-0.18.2 requests-2.26.0 six-1.16.0 " \
-                   "typing-extensions-3.10.0.2"
-
-        actual = create_libraries_string(first_requirements_file)
-
-        mock_read_file_lines.assert_has_calls([call(first_requirements_file), call(second_requirements_file)])
-        self.assertEqual(mock_read_file_lines.call_count, 2)
-        self.assertEqual(excepted, actual)
